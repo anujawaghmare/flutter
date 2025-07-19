@@ -1,0 +1,164 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+// ================== Screens ===================
+
+class MyApp extends StatelessWidget {
+  final GoRouter _router = GoRouter(
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => HomeScreen(),
+      ),
+      GoRoute(
+        path: '/about',
+        builder: (context, state) => AboutScreen(),
+      ),
+      GoRoute(
+        path: '/category',
+        builder: (context, state) => CategoryScreen(),
+        routes: [
+          GoRoute(
+            path: ':type',
+            builder: (context, state) {
+              final type = state.params['type']!;
+              return CategoryDetailScreen(type: type);
+            },
+          ),
+        ],
+      ),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: _router,
+      title: 'Flutter Advanced Navigation',
+      theme: ThemeData(primarySwatch: Colors.green),
+    );
+  }
+}
+
+// ================== Home Screen ===================
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Home')),
+      drawer: AppDrawer(),
+      body: Center(
+        child: Text('Welcome to the Home Screen!', style: TextStyle(fontSize: 20)),
+      ),
+    );
+  }
+}
+
+// ================== About Screen ===================
+
+class AboutScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('About')),
+      drawer: AppDrawer(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          'This is a sample Flutter app with advanced routing using go_router.\n\n'
+          'Built for learning purpose.',
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
+  }
+}
+
+// ================== Category Screen ===================
+
+class CategoryScreen extends StatelessWidget {
+  final List<String> categories = ['fruits', 'vegetables', 'dairy'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Categories')),
+      drawer: AppDrawer(),
+      body: ListView.builder(
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          String type = categories[index];
+          return ListTile(
+            title: Text(type[0].toUpperCase() + type.substring(1)),
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () => context.go('/category/$type'),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ================== Category Detail Screen ===================
+
+class CategoryDetailScreen extends StatelessWidget {
+  final String type;
+
+  CategoryDetailScreen({required this.type});
+
+  final Map<String, List<String>> items = {
+    'fruits': ['Apple', 'Banana', 'Mango'],
+    'vegetables': ['Carrot', 'Tomato', 'Spinach'],
+    'dairy': ['Milk', 'Cheese', 'Butter'],
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final list = items[type.toLowerCase()] ?? [];
+
+    return Scaffold(
+      appBar: AppBar(title: Text('${type[0].toUpperCase()}${type.substring(1)} Items')),
+      body: ListView.builder(
+        itemCount: list.length,
+        itemBuilder: (context, index) => ListTile(
+          title: Text(list[index]),
+        ),
+      ),
+    );
+  }
+}
+
+// ================== Drawer Widget ===================
+
+class AppDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          DrawerHeader(
+            child: Text('Navigation Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
+            decoration: BoxDecoration(color: Colors.green),
+          ),
+          ListTile(
+            title: Text('Home'),
+            onTap: () => context.go('/'),
+          ),
+          ListTile(
+            title: Text('About'),
+            onTap: () => context.go('/about'),
+          ),
+          ListTile(
+            title: Text('Categories'),
+            onTap: () => context.go('/category'),
+          ),
+        ],
+      ),
+    );
+  }
+}

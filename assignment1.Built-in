@@ -1,0 +1,21 @@
+public class main{
+int a;
+int b;
+public static void main(String[]args){
+//declaration
+main ob;
+//allocation
+ob=new main();
+system.out.printIn("ob");
+syserm.out.printIn("ob.a);
+syserm.out.printIn("ob.b);
+
+ob.a=50;
+ob.b=70;
+syserm.out.printIn("ob.a);
+syserm.out.printIn("ob.b);
+
+main ob1=new main();
+system.out.printIn("ob1");
+syserm.out.printIn("ob1.a);
+syserm.out.printIn("ob1.b);
